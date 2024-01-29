@@ -6,6 +6,7 @@ namespace MenuAgenda
     {
         static void Main(string[] args)
         {
+            Console.WriteLine("Hello, World!");
             MostrarMenu();
         }
         static void MostrarMenu()
@@ -19,10 +20,6 @@ namespace MenuAgenda
                 opcio = Convert.ToChar(Console.ReadLine());
                 switch (opcio)
                 {
-                    case 'q':
-                        break;
-                    case 'Q':
-                        break;
                     case '1':
                         Console.Clear();
                         DonarAlta();
@@ -46,6 +43,10 @@ namespace MenuAgenda
                     case '6':
                         Console.Clear();
                         OrdenarAgenda();
+                        break;
+                    case 'q':
+                        break;
+                    case 'Q':
                         break;
 
                 }
@@ -327,9 +328,9 @@ namespace MenuAgenda
                 i--;
             }
         }
-        static void DonarDAltaUsuariSegons()
+        static void Return()
         {
-            int i = 3;
+            int i = 5;
             while (i != 0)
             {
                 Console.Write("\r");
@@ -341,18 +342,18 @@ namespace MenuAgenda
         static string CrearMenu()
         {
             string TextMenu =
-               " _____________________________________________________ \n" +
-               "|                       Agenda                        | \n" +
-               "|-----------------------------------------------------| \n" +
-               "|                 1) Donar alta Usuari                | \n" +
-               "|                 2) Recuperar Usuari                 | \n" +
-               "|                 3) Modificar Usuari                 | \n" +
-               "|                 4) Esborrar Usuari                  | \n" +
-               "|                 5) Mostrar Agenda                   | \n" +
-               "|                 6) Ordenar Agenda                   | \n" +
-               "|                                                     | \n" +
-               "|                 Q) Salir                            | \n" +
-               "|_____________________________________________________| \n" +
+               "╔═════════════════════════════════════════════════════╗\n" +
+               "║                      * Agenda *                     ║ \n" +
+               "╠═════════════════════════════════════════════════════╣ \n" +
+               "║                 1) Donar alta Usuari                ║ \n" +
+               "║                 2) Recuperar Usuari                 ║ \n" +
+               "║                 3) Modificar Usuari                 ║ \n" +
+               "║                 4) Esborrar Usuari                  ║ \n" +
+               "║                 5) Mostrar Agenda                   ║ \n" +
+               "║                 6) Ordenar Agenda                   ║ \n" +
+               "║                                                     ║ \n" +
+               "║                 q) Sortir                           ║ \n" +
+               "╚═════════════════════════════════════════════════════╝ \n" +
                "                                                            \n";
 
             return TextMenu;

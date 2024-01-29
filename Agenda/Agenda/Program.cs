@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MenuAgenda
 {
@@ -15,7 +16,7 @@ namespace MenuAgenda
             do
             {
                 Console.Clear();
-                Console.WriteLine(CrearMenu());
+                Console.Write(CrearMenu());
                 Console.Write("Escull una opcio: ");
                 opcio = Convert.ToChar(Console.ReadLine());
                 switch (opcio)
@@ -53,6 +54,34 @@ namespace MenuAgenda
             } while (opcio != 'Q' && opcio != 'q');
 
         }
+        static string CrearMenu()
+        {
+            string TextMenu =
+               "╔══════════════════════════════════════════════════╗\n" +
+               "║                      * Agenda *                  ║ \n" +
+               "╠══════════════════════════════════════════════════╣ \n" +
+               "║              1) Donar alta Usuari                ║ \n" +
+               "║              2) Recuperar Usuari                 ║ \n" +
+               "║              3) Modificar Usuari                 ║ \n" +
+               "║              4) Esborrar Usuari                  ║ \n" +
+               "║              5) Mostrar Agenda                   ║ \n" +
+               "║              6) Ordenar Agenda                   ║ \n" +
+               "║                                                  ║ \n" +
+               "║              q) Sortir                           ║ \n" +
+               "╚══════════════════════════════════════════════════╝ \n";
+
+            return TextMenu;
+        }
+        // EscriureFitxer: Crear el fitxer i escriure el que ha guardat de les variables
+        static void EscriureFitxer(string nom, string cognom, string dni, string telefon, DateTime dataNaix, string correu)
+        {
+            StreamWriter sW = new StreamWriter("agenda.txt", true);
+            sW.WriteLine($"{nom};{cognom};{dni};{telefon};{dataNaix.ToString("d")};{correu}\r");
+            sW.Close();
+
+        }
+
+        // DonarAlta: Demana strings i emmagatzema els valors dintre del fitxer
         static void DonarAlta()
         {
             Console.Write("Introdueix el nom: ");
@@ -63,130 +92,19 @@ namespace MenuAgenda
             string dni = Console.ReadLine();
             Console.Write("Introdueix el telefon: ");
             string telefon = Console.ReadLine();
-            Console.Write("Introdueix la data de neixament: ");
+            Console.Write("Introdueix la data de naixament: (dd-mm-yyyy)");
             DateTime dataNaix = Convert.ToDateTime(Console.ReadLine());
-            Console.Write("Introduce tu correo electrónico:");
+            Console.Write("Introdueix el teu correu electrónic:");
             string correuElectronic = Console.ReadLine();
-            ObrirFitxer(ValidarNom(nom), ValidarCognom(cognom), ValidarDni(dni), ValidarTelefon(telefon), ValidarDataNeixament(dataNaix), ValidarCorreu(correuElectronic));
-            DonarDAltaUsuariSegons();
-        }
-        static string ValidarNom(string nom)
-        {
-            nom = Regex.Replace(nom, @"[^a-zA-Z]", "");
-            nom = char.ToUpper(nom[0]) + nom.Substring(1).ToLower();
-            return nom;
-        }
-        static string ValidarCognom(string cognom)
-        {
-            cognom = Regex.Replace(cognom, @"[^a-zA-Z]", "");
-            cognom = char.ToUpper(cognom[0]) + cognom.Substring(1).ToLower();
-            return cognom;
-        }
-        static string ValidarDni(string dni)
-        {
             Console.Clear();
-            bool dniValid = false;
-            while (!dniValid)
-            {
-                var dniRegex = new Regex(@"^\d{8}[A-Z]$");
-                if (!dniRegex.IsMatch(dni))
-                {
-                    Console.Write("Aquest DNI no es valid. Introdueix un altre DNI: ");
-                    dni = Console.ReadLine();
-                }
-                else
-                {
-                    dniValid = true;
-                }
-            }
-            return dni;
-        }
-        static string ValidarTelefon(string telefon)
-        {
-            Console.Clear();
-            bool telefonValid = false;
-            while (!telefonValid)
-            {
-                var telefonRegex = new Regex(@"^\d{9}$");
-                if (!telefonRegex.IsMatch(telefon))
-                {
-                    Console.Write("Telefon invalid. Introdueix un altre telefon: ");
-                    telefon = Console.ReadLine();
-                }
-                else
-                    telefonValid = true;
-            }
-            return telefon;
-        }
-        static DateTime ValidarDataNeixament(DateTime dataNaix)
-        {
-            Console.Clear();
-            bool dataValida = false;
-            while (!dataValida)
-            {
-                if (dataNaix > DateTime.Now)
-                {
-                    Console.Write("Data incorrecta.Introdueix un altre data de naixament: ");
-                    dataNaix = Convert.ToDateTime(Console.ReadLine());
-                }
-                else
-                {
-                    dataValida = true;
-                }
-            }
-            return dataNaix;
-        }
-        static string ValidarCorreu(string correu)
-        {
-            Console.Clear();
-            bool correuValid = false;
-            while (!correuValid)
-            {
-                var correuRegex = new Regex(@"^[a-zA-Z0-9]+@[a-zA-Z]{3,}\.(com|es)$");
-                if (!correuRegex.IsMatch(correu))
-                {
-                    Console.Write("Correu Electronic invalid. Introdueix un altre correu: ");
-                    correu = Console.ReadLine();
-                }
-                else
-                    correuValid = true;
-            }
-            return correu;
-        }
-        static void ObrirFitxer(string nom, string cognom, string dni, string telefon, DateTime dataNaix, string correu)
-        {
-            StreamWriter sW = new StreamWriter("agenda.txt", true);
-            sW.WriteLine($"{nom};{cognom};{dni};{telefon};{dataNaix.ToString("d")};{correu}\r");
-            sW.Close();
-
+            EscriureFitxer(ValidarNom(nom), ValidarCognom(cognom), ValidarDni(dni), ValidarTelefon(telefon), ValidarDataNaixament(dataNaix), ValidarCorreu(correuElectronic));
+            Return();
         }
 
+        // RecuperarUsuari: Cerca l'usuari que vulguis i et diu si existeix o no a la agenda
         static void RecuperarUsuari()
         {
-            char trobarUsuari = 'S';
-            while (trobarUsuari != 'N' && trobarUsuari != 'n')
-            {
-                Console.Clear();
-                Console.Write("Quin usuari vols trobar? ");
-                string nomUsuari = Console.ReadLine();
-
-                var linea = File.ReadLines("agenda.txt")
-                    .Select(linea => linea.Split(';')[0]).ToList(); 
-
-                bool trobat = linea.Contains(nomUsuari);
-
-                if (trobat)
-                {
-                    Console.WriteLine($"Usuari: {nomUsuari} trobat.");
-                    trobarUsuari = 'N';
-                }
-                else
-                {
-                    Console.Write("Usuari no trobat. Vols trobar un altre usuari? (S/N)");
-                    trobarUsuari = Convert.ToChar(Console.ReadLine());
-                }
-            }
-            RecuperarUsuariSegons();
+            Return();
         }
         static string RecuperarUsuari(string nomUsuari)
         {
@@ -259,7 +177,6 @@ namespace MenuAgenda
                 Finalitzar = Convert.ToChar(Console.ReadLine());
             }
         }
-
         static void EliminarUsuari()
         {
             char tornarEliminarUsuari = 'S';
@@ -281,26 +198,28 @@ namespace MenuAgenda
             }
 
         }
-
         static void MostrarAgenda()
         {
+            OrdenarAgenda();
             var lineas = File.ReadLines("agenda.txt")
                 .Select(linea => linea.Split(';'))
                 .Where(datos => datos.Length >= 4)
                 .Select(datos => new
                 {
-                    Nombre = datos[0],
-                    Telefono = datos[3]
+                    Nom = datos[0],
+                    Telefon = datos[3]
                 })
-                .OrderBy(usuario => usuario.Nombre)
+                .OrderBy(usuario => usuario.Nom)
                 .ToList();
 
             for (int i = 0; i < lineas.Count; i++)
             {
-                Console.WriteLine($"Nombre: {lineas[i].Nombre}, Teléfono: {lineas[i].Telefono}");
+                Console.WriteLine($"Nom: {lineas[i].Nom}, Teléfon: {lineas[i].Telefon}");
             }
-            RecuperarUsuariSegons();
+            Return();
         }
+
+        // OrdenarAgenda: Ordena el contingut de la agenda segons el nom de la persona
         static void OrdenarAgenda()
         {
             var lineas = File.ReadLines("agenda.txt")
@@ -314,49 +233,121 @@ namespace MenuAgenda
                 .ToList();
 
             File.WriteAllLines("agenda.txt", lineas);
-            Console.WriteLine("La agenda a sido ordenada.");
-            RecuperarUsuariSegons();
+            Console.WriteLine("Agenda ordenada!");
+            Return();
         }
-        static void RecuperarUsuariSegons()
-        {
-            int i = 5;
-            while (i != 0)
-            {
-                Console.Write("\r");
-                Console.Write($"Tornant al menu: {i}'s");
-                Thread.Sleep(1000);
-                i--;
-            }
-        }
+
+        // Return: Temporitzador de 5s que et torna al Menú
         static void Return()
         {
             int i = 5;
             while (i != 0)
             {
                 Console.Write("\r");
-                Console.Write($"Tornant al menu: {i}'s");
+                Console.Write($"Tornant al menu {i}s");
                 Thread.Sleep(1000);
                 i--;
             }
         }
-        static string CrearMenu()
-        {
-            string TextMenu =
-               "╔═════════════════════════════════════════════════════╗\n" +
-               "║                      * Agenda *                     ║ \n" +
-               "╠═════════════════════════════════════════════════════╣ \n" +
-               "║                 1) Donar alta Usuari                ║ \n" +
-               "║                 2) Recuperar Usuari                 ║ \n" +
-               "║                 3) Modificar Usuari                 ║ \n" +
-               "║                 4) Esborrar Usuari                  ║ \n" +
-               "║                 5) Mostrar Agenda                   ║ \n" +
-               "║                 6) Ordenar Agenda                   ║ \n" +
-               "║                                                     ║ \n" +
-               "║                 q) Sortir                           ║ \n" +
-               "╚═════════════════════════════════════════════════════╝ \n" +
-               "                                                            \n";
 
-            return TextMenu;
+        // Validacions: ValidarNom, ValidarCognom, ValidarDNI, ValidarTelefon, ValidarDnaixa, ValidarCorreuElectronic
+        static string ValidarNom(string nom)
+        {
+            string resultat = "";
+            nom = nom.ToLower().Trim();
+            for (int i = 0; i < nom.Length; i++)
+            {
+                if (char.IsLetter(nom[i]))
+                {
+                    resultat += nom[i];
+                }
+            }
+            if (resultat.Length != 0)
+                resultat = resultat.Substring(0, 1).ToUpper() + resultat.Substring(1);
+            return resultat;
+        }
+        static string ValidarCognom(string cognom)
+        {
+            string resultat = "";
+            cognom = cognom.ToLower().Trim();
+            for (int i = 0; i < cognom.Length; i++)
+            {
+                if (char.IsLetter(cognom[i]))
+                {
+                    resultat += cognom[i];
+                }
+            }
+            if (resultat.Length != 0)
+                resultat = resultat.Substring(0, 1).ToUpper() + resultat.Substring(1);
+            return resultat;
+        }
+        static string ValidarDni(string dni)
+        {
+            Console.Clear();
+            bool dniValid = false;
+            while (!dniValid)
+            {
+                var dniRegex = new Regex(@"^\d{8}[A-Z]$");
+                if (!dniRegex.IsMatch(dni))
+                {
+                    Console.WriteLine("Aquest DNI no es valid.");
+                    Console.Write("Introdueix un altre DNI:");
+                    dni = Console.ReadLine();
+                }
+                else
+                {
+                    dniValid = true;
+                }
+            }
+            return dni;
+        }
+        static string ValidarTelefon(string telefon)
+        {
+            if (telefon.Length != 9)
+            {
+                Console.WriteLine("Telèfon incorrecte. Intenteu-ho de nou.");
+                Console.Write("Entra el nou teléfon: ");
+                return ValidarTelefon(Console.ReadLine());
+            }
+            return telefon;
+        }
+
+        static DateTime ValidarDataNaixament(DateTime dataNaix)
+        {
+            Console.Clear();
+            bool dataValida = false;
+            while (!dataValida)
+            {
+                if (dataNaix > DateTime.Now)
+                {
+                    Console.WriteLine("Data de naixament incorrecte. Intenteu-ho de nou.");
+                    Console.Write("Entra una nova data de naixament: ");
+                    dataNaix = Convert.ToDateTime(Console.ReadLine());
+                }
+                else
+                {
+                    dataValida = true;
+                }
+            }
+            return dataNaix;
+        }
+        static string ValidarCorreu(string correu)
+        {
+            Console.Clear();
+            bool correuValid = false;
+            while (!correuValid)
+            {
+                var correuRegex = new Regex(@"^[a-zA-Z0-9]+@[a-zA-Z]{3,}\.(com|es)$");
+                if (!correuRegex.IsMatch(correu))
+                {
+                    Console.WriteLine("Correu incorrecte. Intenteu-ho de nou.");
+                    Console.Write("Entra el nou correu: ");
+                    correu = Console.ReadLine();
+                }
+                else
+                    correuValid = true;
+            }
+            return correu;
         }
     }
 }

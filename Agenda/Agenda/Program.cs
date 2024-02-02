@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Text;
+using System.Text.RegularExpressions;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MenuAgenda
@@ -7,7 +8,6 @@ namespace MenuAgenda
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
             MostrarMenu();
         }
         static void MostrarMenu()
@@ -198,43 +198,112 @@ namespace MenuAgenda
             }
 
         }
+        // Mostra la Agenda
         static void MostrarAgenda()
         {
-            OrdenarAgenda();
-            var lineas = File.ReadLines("agenda.txt")
-                .Select(linea => linea.Split(';'))
-                .Where(datos => datos.Length >= 4)
-                .Select(datos => new
-                {
-                    Nom = datos[0],
-                    Telefon = datos[3]
-                })
-                .OrderBy(usuario => usuario.Nom)
-                .ToList();
+            Console.Clear();
+            string contingut = File.ReadAllText("agenda.txt");
 
-            for (int i = 0; i < lineas.Count; i++)
+            string[] lineas = contingut.Split('\n');
+
+            Console.WriteLine("Noms i Telèfons de l'Agenda:");
+            Console.WriteLine("╔════════════════════════════════╗");
+            Console.WriteLine("║   Nom            Telefono      ║");
+            Console.WriteLine("╠════════════════════════════════╬");
+
+            for (int i = 0; i < lineas.Length; i++)
             {
-                Console.WriteLine($"Nom: {lineas[i].Nom}, Teléfon: {lineas[i].Telefon}");
+                int indexOfSeparator = lineas[i].IndexOf(';');
+                string nombre = indexOfSeparator != -1 ? lineas[i].Substring(0, indexOfSeparator) : "";
+                string telefono = indexOfSeparator != -1 && lineas[i].Length > indexOfSeparator + 1 ? lineas[i].Substring(indexOfSeparator + 1) : "";
+
+                Console.WriteLine($"║ {nombre,-30} {telefono,-20} ║");
             }
+
+            Console.WriteLine("╚════════════════════════════════╩════════════╝");
+
             Return();
         }
+
 
         // OrdenarAgenda: Ordena el contingut de la agenda segons el nom de la persona
         static void OrdenarAgenda()
         {
-            var lineas = File.ReadLines("agenda.txt")
-                .Select(linea => new
-                {
-                    Datos = linea.Split(';'),
-                    Nombre = linea.Split(';')[0]
-                })
-                .OrderBy(usuario => usuario.Nombre)
-                .Select(usuario => string.Join(";", usuario.Datos))
-                .ToList();
+            string contingut = File.ReadAllText("agenda.txt");
+            int principistring = 0;
+            int finalstring = 0;
 
-            File.WriteAllLines("agenda.txt", lineas);
+            while (principistring < contingut.Length)
+            {
+                finalstring = contingut.IndexOf('\n', principistring);
+
+                if (finalstring == -1)
+                    finalstring = contingut.Length;
+
+                string linia = contingut.Substring(principistring, finalstring - principistring);
+
+                int punticoma = linia.IndexOf(';');
+                string nom = punticoma != -1 ? linia.Substring(0, punticoma) : linia;
+
+                int posicio = principistring;
+                while (posicio > 0 && punticoma != -1 && string.Compare(nom, contingut.Substring(posicio, contingut.IndexOf('\n', posicio) - posicio)) < 0)
+                    posicio = contingut.IndexOf('\n', posicio) + 1;
+
+                contingut = contingut.Remove(principistring, finalstring - principistring);
+                contingut = contingut.Insert(posicio, linia);
+                principistring = posicio + 1;
+            }
+            File.WriteAllText("agenda.txt", contingut);
+
             Console.WriteLine("Agenda ordenada!");
             Return();
+        }
+
+
+        // OrdenarAgendaAux: Ordena la agenda sense mostrar res per a que en el metode de mostrar agenda estigui ordenat
+        static void OrdenarAgendaAux()
+        {
+            string contingut = File.ReadAllText("agenda.txt");
+
+            // Verificar si el archivo está vacío o no contiene saltos de línea
+            if (string.IsNullOrEmpty(contingut) || !contingut.Contains("\n"))
+            {
+                Console.WriteLine("La agenda está vacía o no contiene saltos de línea para ordenar.");
+                return;
+            }
+
+            int principiLinia = 0;
+            int finalLinia = 0;
+
+            while (principiLinia < contingut.Length)
+            {
+                finalLinia = contingut.IndexOf('\n', principiLinia);
+
+                if (finalLinia == -1)
+                    finalLinia = contingut.Length;
+
+                string linia = contingut.Substring(principiLinia, finalLinia - principiLinia);
+
+                // Verificar si la línea contiene al menos un punto y coma
+                int punticoma = linia.IndexOf(';');
+                if (punticoma != -1)
+                {
+                    string nom = linia.Substring(0, punticoma);
+
+                    int posicio = principiLinia;
+                    while (posicio > 0 && posicio + linia.Length < contingut.Length &&
+                           string.Compare(nom, contingut.Substring(posicio, linia.Length)) < 0)
+                    {
+                        posicio = contingut.IndexOf('\n', posicio) + 1;
+                    }
+
+                    contingut = contingut.Remove(principiLinia, finalLinia - principiLinia);
+                    contingut = contingut.Insert(posicio, linia);
+                    principiLinia = posicio + 1;
+                }
+            }
+
+            File.WriteAllText("agenda.txt", contingut);
         }
 
         // Return: Temporitzador de 5s que et torna al Menú

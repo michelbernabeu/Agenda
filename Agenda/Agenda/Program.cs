@@ -1,10 +1,12 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Text;
+using System.Text.RegularExpressions;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MenuAgenda
 {
     internal class Program
-    {
+    {   
+        // Versio Agenda: Michel i Eric
         static void Main(string[] args)
         {
             MenuLlistat();

@@ -5,7 +5,8 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 namespace MenuAgenda
 {
     internal class Program
-    {
+    {   
+        // Versio Agenda: Michel i Eric
         static void Main(string[] args)
         {
             MenuLlistat();
@@ -113,8 +114,6 @@ namespace MenuAgenda
             while (trobarUsuari != 'N' && trobarUsuari != 'n' && !usuariTrobat)
             {
                 string contingutFitxer = File.ReadAllText("agenda.txt");
-
-                // Buscar el nombre de usuario en el contenido del archivo
                 int posicio = contingutFitxer.IndexOf($"{nomUsuari};");
 
                 if (posicio != -1)
@@ -138,11 +137,7 @@ namespace MenuAgenda
                 if (finalLinea != -1)
                 {
                     string lineaUsuario = contingutFitxer.Substring(posicio, finalLinea - posicio);
-
-                    // Dividir la línea en sus componentes
                     string[] dadesUsuari = lineaUsuario.Split(';');
-
-                    // Mostrar los detalles del usuario
                     Console.WriteLine($"Nom: {dadesUsuari[0]}");
                     Console.WriteLine($"Cognom: {dadesUsuari[1]}");
                     Console.WriteLine($"DNI: {dadesUsuari[2]}");
